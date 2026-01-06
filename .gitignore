@@ -1,0 +1,92 @@
+# =========================
+# Visual Studio
+# =========================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# =========================
+# Build Results
+# =========================
+Debug/
+DebugPublic/
+Release/
+x64/
+x86/
+ARM/
+ARM64/
+build/
+out/
+
+# =========================
+# CMake
+# =========================
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# =========================
+# Compiled Object files
+# =========================
+*.obj
+*.o
+*.lo
+*.slo
+
+# =========================
+# Executables
+# =========================
+*.exe
+*.out
+*.app
+
+# =========================
+# Libraries
+# =========================
+*.lib
+*.a
+*.dll
+*.so
+*.dylib
+
+# =========================
+# Precompiled Headers
+# =========================
+*.pch
+*.ipch
+
+# =========================
+# Debug / Symbol files
+# =========================
+*.pdb
+*.idb
+*.ilk
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+*.swp
+*~
+
+# =========================
+# OpenGL / Graphics assets cache
+# =========================
+*.cache
+*.bak
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
