@@ -7,6 +7,7 @@
 
 #include "Example.h"
 
+//windows os로부터 이벤트를 가져오는 코드
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // 콘솔창이 있으면 디버깅에 편리합니다.
