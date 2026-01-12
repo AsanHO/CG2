@@ -31,7 +31,7 @@ vec3 RotateAboutX(const vec3 &v, const float &theta) {
 // 쉐이더에서 공통적으로 사용하는 상수들
 // 예) 모든 버텍스들을 같은 비율로 스케일
 struct Constants {
-    //중요: 이것들을 하나로 합칠 순 없을까?
+    // 중요: 이것들을 하나로 합칠 순 없을까?
     vec3 scale = vec3(1.0f);
     vec3 translation = vec3(0.0f);
     float rotationX = 0.0f;
@@ -125,7 +125,16 @@ vec2 Rasterization::ProjectWorldToRaster(vec3 pointWorld) {
 
     // 원근투영(Perspective projection)
     if (this->usePerspectiveProjection) {
-        // ... 
+        // ...
+        //
+        /*pointProj.x =
+            (pointProj.x / (distEyeToScreen + pointWorld.z)) * distEyeToScreen;
+        pointProj.y =
+            (pointProj.y / (distEyeToScreen + pointWorld.z)) *
+        distEyeToScreen;*/
+        const float scale =
+            distEyeToScreen / (this->distEyeToScreen + pointWorld.z);
+        pointProj = pointProj * scale;
     }
 
     // NDC로 변환[-1, 1] x[-1, 1]
@@ -221,9 +230,15 @@ void Rasterization::DrawIndexedTriangle(const size_t &startIndex,
 
                 if (this->usePerspectiveProjection &&
                     this->usePerspectiveCorrectInterpolation) {
+                    // w0, w1, w2를 z0, z1, z2를 이용해서 보정
+                    w0 /= z0;
+                    w1 /= z1;
+                    w2 /= z2;
 
-                       // w0, w1, w2를 z0, z1, z2를 이용해서 보정
-
+                    const float wSum = w0 + w1 + w2;
+                    w0 /= wSum;
+                    w1 /= wSum;
+                    w2 /= wSum;
                 }
 
                 // 이하 동일
