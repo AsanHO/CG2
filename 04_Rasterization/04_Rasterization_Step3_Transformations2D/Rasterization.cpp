@@ -113,7 +113,11 @@ void Rasterization::Render(vector<vec4> &pixels) {
     }
 }
 
-vec3 RotateAboutZ(const vec3 &v, const float &theta) { return v; }
+vec3 RotateAboutZ(const vec3 &v, const float &theta) {
+
+    return vec3(v.x * cos(theta) - v.y * sin(theta),
+                v.x * sin(theta) + v.y * cos(theta), v.z);
+}
 
 void Rasterization::Update() {
     // 애니메이션 구현
@@ -122,21 +126,23 @@ void Rasterization::Update() {
     // 이 예제에서는 this->vertexBuffer만 업데이트하고
     // colorBuffer와 indexBuffer는 변화 없음
 
-    // 이동(Translation)
+    //// 이동(Translation)
     // for (size_t i = 0; i < circle.vertices.size(); i++) {
-    //     this->vertexBuffer[i] = ...;
+    //
     // }
 
-    // 회전(Rotation)
+    //// 회전(Rotation)
     // for (size_t i = 0; i < circle.vertices.size(); i++) {
-    //    this->vertexBuffer[i] =
-    //        RotateAboutZ(circle.vertices[i], this->rotation1);
-    //}
+    //
+    // }
 
     // 스케일(Scale)
-    // for (size_t i = 0; i < circle.vertices.size(); i++) {
-    //    this->vertexBuffer[i] = ...;
-    //}
+    for (size_t i = 0; i < circle.vertices.size(); i++) {
+        vec3 vtx = circle.vertices[i];
+        vtx += this->translation1;
+        vtx = RotateAboutZ(vtx, this->rotation1);
+        this->vertexBuffer[i] = vtx * vec3(this->scaleX, this->scaleY, 1.0f);
+    }
 
     // 중요: 버텍스 쉐이더(Vertex shader)가 하는 일들입니다.
 }

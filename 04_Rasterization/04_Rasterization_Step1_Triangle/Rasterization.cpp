@@ -108,7 +108,7 @@ void Rasterization::Render(vector<vec4> &pixels) {
             // 2D라서 z값을 0으로 고정하면 간단해짐
 
             const vec2 point = vec2(float(i), float(j));
-
+            //vertex가 시계방향으로 나열되어 있음
             const float alpha0 =
                 EdgeFunction(v1, v2, point);
             const float alpha1 =

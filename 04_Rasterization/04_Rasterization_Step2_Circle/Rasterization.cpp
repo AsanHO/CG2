@@ -13,7 +13,7 @@ Rasterization::Rasterization(const int &width, const int &height)
     // 원을 그려봅시다.
     const auto radius = 0.5f;                   // 원의 반지름
     const auto center = vec3(0.0f, 0.0f, 1.0f); //원의 중심
-    const size_t numTriangles = 5; // 삼각형 몇 개로 그릴지
+    const size_t numTriangles = 6; // 삼각형 몇 개로 그릴지
 
     this->vertices.reserve(numTriangles + 1); // 중심 버텍스 추가
     this->colors.reserve(this->vertices.size());
@@ -30,8 +30,21 @@ Rasterization::Rasterization(const int &width, const int &height)
     const auto deltaTheta = kTwoPi / float(numTriangles);
 
 	// 여기서부터 this->vertices, colors, indices 결정
-
-	
+    for (size_t i = 0; i < numTriangles; i++) {
+        this->vertices.push_back(
+            vec3(radius * cos(deltaTheta*i), radius * sin(deltaTheta*i), 1.0f));
+        this->colors.push_back(vec3(1.0f, 1.0f, 1.0f));
+        if (i == numTriangles - 1) {
+            this->indices.push_back(0);
+            this->indices.push_back(1);
+            this->indices.push_back(numTriangles);
+            break;
+        }
+        this->indices.push_back(0);
+        this->indices.push_back(i+2);
+        this->indices.push_back(i+1);
+    }
+    
 }
 
 // 3차원 좌표를 2차원 좌표로 변환

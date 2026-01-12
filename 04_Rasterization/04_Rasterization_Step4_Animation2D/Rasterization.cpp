@@ -149,7 +149,10 @@ void Rasterization::Render(vector<vec4> &pixels) {
     // 지구 그리기
     this->vertexBuffer.resize(earth.vertexBuffer.size());
     for (size_t i = 0; i < earth.vertexBuffer.size(); i++) {
-        this->vertexBuffer[i] = earth.vertexBuffer[i];//TODO: 추가
+
+        this->vertexBuffer[i] = RotateAboutZ(
+            earth.vertexBuffer[i] + vec3(this->distSunToEarth, 0.0f, 0.0f),
+            earthAngle);
     }
 
     this->indexBuffer = earth.indexBuffer;
@@ -161,8 +164,15 @@ void Rasterization::Render(vector<vec4> &pixels) {
 
     // 달 그리기
     this->vertexBuffer.resize(moon.vertices.size());
+
     for (size_t i = 0; i < moon.vertices.size(); i++) {
-        this->vertexBuffer[i] = moon.vertexBuffer[i];//TODO: 추가
+        // TODO: 추가
+        this->vertexBuffer[i] = RotateAboutZ(
+            RotateAboutZ(moon.vertexBuffer[i] +
+                    vec3(this->distEarthToMoon, 0.0f, 0.0f),
+                         moonAngle) + // 달을 0.1만큼 이동하고 먼저 회전
+                vec3(this->distSunToEarth, 0.0f, 0.0f),
+            earthAngle);
     }
 
     this->indexBuffer = moon.indexBuffer;
