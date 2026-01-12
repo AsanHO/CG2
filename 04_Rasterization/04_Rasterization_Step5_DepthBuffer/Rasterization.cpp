@@ -11,13 +11,13 @@ Rasterization::Rasterization(const int &width, const int &height)
     : width(width), height(height) {
 
     // Mesh 클래스에서 원으로 초기화
-    
+
     circle1.InitCircle(0.3f, 30, vec3(1.0f, 0.0f, 0.0f)); // red
     circle2.InitCircle(0.5f, 30, vec3(0.0f, 0.0f, 1.0f)); // blue
     circle3.InitCircle(0.5f, 30, vec3(1.0f, 1.0f, 0.0f)); // yellow
 
     center1 = vec3(0.0f, 0.0f, 0.1f); // 가장 앞
-	center2 = vec3(-0.3, 0.0f, 0.3f);
+    center2 = vec3(-0.3, 0.0f, 0.3f);
     center3 = vec3(0.3, 0.0f, 0.7f); // 화면에서 더 멀도록 배치
 
     // 버퍼로 복사 (GPU 메모리에 사본을 만든다고 생각합시다.)
@@ -126,14 +126,17 @@ void Rasterization::DrawIndexedTriangle(const size_t &startIndex,
                 const vec3 color =
                     (alpha0 * c0 + alpha1 * c1 + alpha2 * c2) / area;
 
-				// 정투영(orthographic projection)에서만 정확합니다.
-				// 뒤에서 Perspective Correct Interpolation으로 보정
-                //TODO: Bary-centric coordinates를 이용해서 z 좌표 찾기
-                //const float depth = ...;
-
-                //TODO: 조건 추가
-				if (true) {
-                    //TODO: 깊이 버퍼 업데이트
+                // 정투영(orthographic projection)에서만 정확합니다.
+                // 뒤에서 Perspective Correct Interpolation으로 보정
+                // TODO: Bary-centric coordinates를 이용해서 z 좌표 찾기
+                const float depth = (alpha0 * this->vertexBuffer[i0].z +
+                                     alpha1 * this->vertexBuffer[i1].z +
+                                     alpha2 * this->vertexBuffer[i2].z) /
+                                    area;
+                // TODO: 조건 추가
+                if (depth < depthBuffer[i+width *j]) {
+                    // TODO: 깊이 버퍼 업데이트
+                    depthBuffer[i + width * j] = depth;
                     pixels[i + width * j] = vec4(color, 1.0f);
                 }
             }
@@ -148,11 +151,11 @@ vec3 RotateAboutZ(const vec3 &v, const float &theta) {
 
 void Rasterization::Render(vector<vec4> &pixels) {
 
-	// 깊이 버퍼 초기화
-	this->depthBuffer.resize(pixels.size());
-    
-    //TODO: 깊이 버퍼의 값도 초기화해줘야 합니다.
-	// std::fill() 사용
+    // 깊이 버퍼 초기화
+    this->depthBuffer.resize(pixels.size());
+
+    // TODO: 깊이 버퍼의 값도 초기화해줘야 합니다.
+    //  std::fill() 사용
 
     // 뒷쪽의 원을 나중에 그리기
     this->vertexBuffer.resize(circle1.vertexBuffer.size());
