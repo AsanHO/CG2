@@ -181,8 +181,8 @@ void Rasterization::DrawIndexedTriangle(const size_t &startIndex,
             const float alpha0 = EdgeFunction(v1, v2, point);
             const float alpha1 = EdgeFunction(v2, v0, point);
             const float alpha2 = EdgeFunction(v0, v1, point);
-
-            if (alpha0 >= 0.0f && alpha1 >= 0.0f && alpha2 >= 0.0f) {
+            
+            if (cullBackface ||alpha0 >= 0.0f && alpha1 >= 0.0f && alpha2 >= 0.0f) { //여기에 작성하면 불필요한 연산을 하기 때문에 위에 작성하자.
 
                 const float area = alpha0 + alpha1 + alpha2;
                 const vec3 color =
