@@ -49,13 +49,14 @@ vec3 BlinnPhong(vec3 lightStrength, vec3 lightVec, vec3 normal, vec3 toEye,
                 Material mat) {
 
     // Halfway vector 계산
-    // vec3 halfway = ...
+    vec3 halfway = normalize(normal + toEye);
 
     // Halyway vector를 이용해서 specular albedo 계산
-    // vec3 specular = ...
+    vec3 specular = mat.specular *
+                    pow(glm ::max(dot(halfway, normal), 0.0f), mat.shininess);
 
     // ambient, diffuse, specular 합쳐서 계산
-    return mat.ambient;
+    return mat.ambient + (mat.diffuse + specular) * lightStrength;
 }
 
 vec3 ComputeDirectionalLight(Light L, Material mat, vec3 normal, vec3 toEye) {
@@ -63,9 +64,9 @@ vec3 ComputeDirectionalLight(Light L, Material mat, vec3 normal, vec3 toEye) {
     // 계산에 사용하는 lightVector는 directional light가 향하는 방향의 반대
     vec3 lightVec = -L.direction;
 
-    // float ndotl = glm::max(..., 0.0f);
+     float ndotl = glm::max(dot(lightVec,normal), 0.0f);
 
-    vec3 lightStrength = vec3(1.0f);
+    vec3 lightStrength = ndotl *L.strength;
 
     // Luna DX12 책에서는 Specular 계산에도
     // Lambert's law가 적용된 lightStrength를 사용합니다.
