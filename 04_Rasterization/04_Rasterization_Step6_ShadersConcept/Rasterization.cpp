@@ -31,11 +31,11 @@ vec3 RotateAboutX(const vec3 &v, const float &theta) {
 // 쉐이더에서 공통적으로 사용하는 상수들
 // 예) 모든 버텍스들을 같은 비율로 스케일
 struct Constants {
-    //중요: 이것들을 하나로 합칠 순 없을까?
+    // 중요: 이것들을 하나로 합칠 순 없을까?
     vec3 scale = vec3(1.0f);
     vec3 translation = vec3(0.0f);
     float rotationZ = 0.0f;
-} constants;// g_constants
+} constants; // g_constants
 
 // 버텍스 쉐이더 (Vertex shader)
 struct VSInput {
@@ -67,10 +67,14 @@ struct PSInput {
     vec2 uv;
 };
 
-vec4 MyPixelShader(const PSInput psInput) { 
-	
+vec4 MyPixelShader(const PSInput psInput) {
+
     // 여기서 픽셀의 색을 결정하기 위한 여러가지 규칙 적용
-    return vec4(psInput.color, 1.0f); 
+    //cout << psInput.uv.x << " : " << psInput.uv.y << endl;
+    if (psInput.uv.x > 0.5f) {
+        return vec4(vec3(1.0f, 1.0f, 0.0f), 1.0f);
+    }
+    return vec4(psInput.color, 1.0f);
 }
 
 // 여기까지 쉐이더 정의
@@ -203,7 +207,7 @@ void Rasterization::Render(vector<vec4> &pixels) {
          1.0f); // 큰 값으로 초기화
 
     for (const auto &mesh : this->meshes) {
-
+        cout << "Render" << mesh->rotationZ << endl;
         constants.rotationZ = mesh->rotationZ;
         constants.scale = mesh->scale;
         constants.translation = mesh->translation;
@@ -216,7 +220,7 @@ void Rasterization::Render(vector<vec4> &pixels) {
         for (size_t i = 0; i < mesh->vertexBuffer.size(); i++) {
 
             VSInput vsInput;
-            vsInput.position = mesh->vertexBuffer[i];
+            vsInput.position = RotateAboutZ(mesh->vertexBuffer[i],constants.rotationZ);
             vsInput.color = mesh->colorBuffer[i];
             vsInput.uv = mesh->uvBuffer[i];
 
@@ -239,7 +243,8 @@ void Rasterization::Update() {
     // 애니메이션 구현
 
     for (auto &mesh : this->meshes) {
-        mesh->rotationZ += 0.001f;
+        mesh->rotationZ += 0.01f;
+      
     }
 }
 } // namespace hlab
