@@ -14,7 +14,7 @@ using namespace std;
 Rasterization::Rasterization(const int &width, const int &height)
     : width(width), height(height) {
 
-    // 조명 설정
+    // 조명 설정 
     light.strength = vec3(1.0f);
     light.direction = vec3(0.0f, -1.0f, 0.0f);
 
