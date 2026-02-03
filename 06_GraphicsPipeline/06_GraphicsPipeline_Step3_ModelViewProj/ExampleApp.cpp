@@ -169,7 +169,7 @@ bool ExampleApp::Initialize() {
     return true;
 }
 
-void ExampleApp::Update(float dt) {
+void ExampleApp::Update(float dt) { //매 프레임 당 한번씩 실행
 
     using namespace DirectX;
 

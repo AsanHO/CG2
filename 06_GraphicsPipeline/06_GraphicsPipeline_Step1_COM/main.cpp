@@ -8,7 +8,7 @@ using namespace std;
 
 int main() {
 
-    // Component Object Model (COM)
+    // Component Object Model (COM) 
 
     // Microsoft::WRL::ComPtr is a C++ template smart-pointer for COM objects
     // that is used extensively in Windows Runtime (WinRT) C++ programming
@@ -28,7 +28,7 @@ int main() {
 
     D3D_FEATURE_LEVEL m_d3dFeatureLevel;
 
-    HRESULT hr = D3D11CreateDevice(
+    HRESULT hr = D3D11CreateDevice( // new같은 키워드를 사용하는 것이 아님
         nullptr,                  // Specify nullptr to use the default adapter.
         D3D_DRIVER_TYPE_HARDWARE, // Create a device using the hardware graphics
                                   // driver.
@@ -53,18 +53,18 @@ int main() {
     // 인터페이스에 대한 포인터를 가지고 있을 다른 ComPtr 변수
     ComPtr<ID3D11Device> m_d3dDevice;
 
-    hr = device.As(&m_d3dDevice);
+    hr = device.As(&m_d3dDevice); // 복사해서 사용
 
     if (FAILED(hr)) {
         cout << "Failed." << endl;
         return -1;
     }
 
-    auto temp = m_d3dDevice.Get();
+    auto temp = m_d3dDevice.Get(); // 포인터를 가져올때 사용
 
     // 수동으로 Release
     m_d3dDevice.Reset();
-    // m_d3dDevice = nullptr;
+    // m_d3dDevice = nullptr; 위 코드와 동일
 
     if (!m_d3dDevice) {
         cout << "m_d3dDevice Released" << endl;
@@ -75,7 +75,7 @@ int main() {
         m_constantBuffer.Get(),
     };
     m_context->VSSetConstantBuffers(0, 1, pptr);
-    m_context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+    m_context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf()); // 이중포인터를 가져올 경우가 많음
     */
 
     return 0;

@@ -13,7 +13,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // 디버깅할 때 애매한 값들을 cout으로 출력해서 확인해보세요.
 int main() {
     // 내 모니터에 맞는 해상도로 조절하셔도 됩니다.
-    const int width = 1280, height = 960;
+    const int width = 720, height = 360;
 
     WNDCLASSEX wc = {sizeof(WNDCLASSEX),
                      CS_CLASSDC,

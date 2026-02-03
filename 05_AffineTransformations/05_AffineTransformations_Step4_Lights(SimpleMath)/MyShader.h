@@ -38,9 +38,9 @@ struct Constants {
 
     // GPU로 Transformation 대신에 matrix 하나만 보냅니다.
     // Transformation transformation;
-    Matrix modelMatrix;//worldMatrix라고 부르기도 합니다.
-    Matrix invTranspose;//Normal에 적용합니다.
-	// 그 외에 viewMatrix, projectionMatrix 등도 사용합니다.
+    Matrix modelMatrix;  // worldMatrix라고 부르기도 합니다.
+    Matrix invTranspose; // Normal에 적용합니다.
+    // 그 외에 viewMatrix, projectionMatrix 등도 사용합니다.
 
     Material material;
     Light light;
@@ -163,8 +163,8 @@ VSOutput MyVertexShader(const VSInput vsInput) {
     Vector4 point = Vector4(vsInput.position.x, vsInput.position.y,
                             vsInput.position.z, 1.0f);
 
-    // point = ...;
-	
+    point = Vector4::Transform(point, constants.modelMatrix);
+
     vsOutput.position = Vector3(point.x, point.y, point.z);
 
     // 주의: 노멀 벡터도 물체와 같이 회전시켜줘야 합니다.
@@ -179,7 +179,7 @@ VSOutput MyVertexShader(const VSInput vsInput) {
     Vector4 normal =
         Vector4(vsInput.normal.x, vsInput.normal.y, vsInput.normal.z, 0.0f);
     // Unon-uniform transformation인 경우에는 보정 필요
-    // normal = ...;
+     normal = Vector4::Transform(normal, constants.invTranspose);
     normal.Normalize();
 
     vsOutput.normal = Vector3(normal.x, normal.y, normal.z);

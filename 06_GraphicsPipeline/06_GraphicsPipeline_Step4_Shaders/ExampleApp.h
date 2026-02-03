@@ -18,7 +18,8 @@ using DirectX::SimpleMath::Vector3;
 struct Vertex {
     Vector3 position;
     Vector3 color;
-    // TODO: texture coordinates 추가
+    // TODO3: texture coordinates 추가
+    Vector2 texcoord;
 };
 
 // 이 예제에서 ConstantBuffer로 보낼 데이터
@@ -38,7 +39,11 @@ struct ModelViewProjectionConstantBuffer {
 static_assert((sizeof(ModelViewProjectionConstantBuffer) % 16) == 0,
               "Constant Buffer size must be 16-byte aligned");
 
-// TODO: 픽셀 쉐이더로 보낼 ConstantBuffer
+// TODO6: 픽셀 쉐이더로 보낼 ConstantBuffer
+struct PixelShaderConstantBuffer {
+    float xSplit; // 4bytes
+    float padding[3]; // 4 * 3 = 12 bytes
+};
 
 class ExampleApp : public AppBase {
   public:
@@ -59,11 +64,14 @@ class ExampleApp : public AppBase {
     ComPtr<ID3D11Buffer> m_constantBuffer;
     UINT m_indexCount;
 
-    // TODO: 픽셀쉐이더에서 사용할 Constant Buffer
+    // TODO4: 픽셀쉐이더에서 사용할 Constant Buffer
+    ComPtr<ID3D11Buffer> m_pixelShaderconstantBuffer;
 
     ModelViewProjectionConstantBuffer m_constantBufferData;
 
-    // TODO: 픽셀쉐이더에서 사용할 Constant Buffer Data
+    // TODO5: 픽셀쉐이더에서 사용할 Constant Buffer Data
+    PixelShaderConstantBuffer m_pixelShaderConstantBufferData;
+
 
     bool m_usePerspectiveProjection = true;
     Vector3 m_modelTranslation = Vector3(0.0f);

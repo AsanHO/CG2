@@ -29,16 +29,21 @@ auto MakeSquare() {
     normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
     normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
 
-    // TODO: 텍스춰 좌표 추가
+    // TODO1: 텍스춰 좌표 추가
     // Texture Coordinates (Direct3D 9)
     // https://learn.microsoft.com/en-us/windows/win32/direct3d9/texture-coordinates
+    texcoords.push_back(Vector2(0.0f, 0.0f));
+    texcoords.push_back(Vector2(1.0f, 0.0f));
+    texcoords.push_back(Vector2(1.0f, 1.0f));
+    texcoords.push_back(Vector2(0.0f, 1.0f));
 
     vector<Vertex> vertices;
     for (size_t i = 0; i < positions.size(); i++) {
         Vertex v;
         v.position = positions[i];
         v.color = colors[i];
-        // TODO: 텍스춰 좌표 추가
+        // TODO2: 텍스춰 좌표 추가
+        v.texcoord = texcoords[i];
         vertices.push_back(v);
     }
     vector<uint16_t> indices = {
@@ -185,7 +190,10 @@ bool ExampleApp::Initialize() {
 
     AppBase::CreateConstantBuffer(m_constantBufferData, m_constantBuffer);
 
-    // TODO: 픽셀쉐이더로 보낼 ConstantBuffer 만들기
+    // TODO4: 픽셀쉐이더로 보낼 ConstantBuffer 만들기
+    // 셰이더들은 서로 다른 프로그램이기 때문에 각 프로그램마다의 버퍼가 따로
+    // 필요하다.
+    AppBase::CreateConstantBuffer(m_pixelShaderConstantBufferData, m_pixelShaderconstantBuffer);
 
     // 쉐이더 만들기
 
@@ -210,7 +218,9 @@ bool ExampleApp::Initialize() {
          D3D11_INPUT_PER_VERTEX_DATA, 0},
         {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * 3,
          D3D11_INPUT_PER_VERTEX_DATA, 0},
-        // TODO: 텍스춰 좌표를 버텍스 쉐이더로 보내겠다!
+        // TODO7: 텍스춰 좌표를 버텍스 쉐이더로 보내겠다!
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 4 * 3 + 4 * 3,
+         D3D11_INPUT_PER_VERTEX_DATA, 0},
     };
 
     AppBase::CreateVertexShaderAndInputLayout(
@@ -254,7 +264,10 @@ void ExampleApp::Update(float dt) {
     // Constant를 CPU에서 GPU로 복사
     AppBase::UpdateBuffer(m_constantBufferData, m_constantBuffer);
 
-    // TODO: 픽셀 쉐이더에서 사용할 ConstantBuffer 업데이트
+    // TODO10: 픽셀 쉐이더에서 사용할 ConstantBuffer 업데이트 -> GUI에서
+    // 업데이트 되는 값.
+    AppBase::UpdateBuffer(m_pixelShaderConstantBufferData,
+                          m_pixelShaderconstantBuffer);
 }
 
 void ExampleApp::Render() {
@@ -292,7 +305,9 @@ void ExampleApp::Render() {
 
     m_context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
 
-    // TODO: 여기서 뭘 해줘야 할까요?
+    // TODO12: 여기서 뭘 해줘야 할까요?
+    m_context->PSSetConstantBuffers(0, 1,
+                                    m_pixelShaderconstantBuffer.GetAddressOf());
 
     m_context->PSSetShader(m_colorPixelShader.Get(), 0, 0);
 
@@ -310,10 +325,9 @@ void ExampleApp::Render() {
 }
 
 void ExampleApp::UpdateGUI() {
-    // TODO: GUI 기능 추가
-    // ImGui::SliderFloat("xSplit", &m_pixelShaderConstantBufferData.xSplit,
-    // 0.0f,
-    //                   1.0f);
+    // TODO11: GUI 기능 추가
+    ImGui::SliderFloat("xSplit", &m_pixelShaderConstantBufferData.xSplit, 0.0f,
+                       1.0f);
 }
 
 } // namespace hlab

@@ -45,7 +45,7 @@ Vector2 Rasterization::ProjectWorldToRaster(Vector3 pointWorld) {
     Vector2 pointProj = Vector2(pointWorld.x, pointWorld.y);
 
     // 원근투영(Perspective projection)
-	// 원근투영도 행렬로 표현할 수 있습니다.
+    // 원근투영도 행렬로 표현할 수 있습니다.
     if (this->usePerspectiveProjection) {
         const float scale =
             distEyeToScreen / (this->distEyeToScreen + pointWorld.z);
@@ -207,7 +207,7 @@ void Rasterization::Render(vector<Vector4> &pixels) {
         // GPU 메모리로 복사하는 것처럼 생각해주세요.
         // constants.transformation = mesh->transformation;
 
-		// Vertex Shader에서 변환에 사용했던 코드
+        // Vertex Shader에서 변환에 사용했던 코드
         // vsOutput.position =
         // RotateAboutX(
         //     RotateAboutY(vsInput.position * constants.transformation.scale,
@@ -216,10 +216,16 @@ void Rasterization::Render(vector<Vector4> &pixels) {
         // constants.transformation.translation;
 
         // 여기서 GPU에게 보내줄 변환 행렬을 만들어줘야 합니다.
-        // constants.modelMatrix = ...;
-        // constants.invTranspose = ..;
-		// 모델 변환 이외에도 시점 변환, 프로젝션 변환을 행렬로 미리 계산해서
-		// 쉐이더로 보내줄 수 있습니다.
+        constants.modelMatrix = Matrix::CreateScale(
+            mesh->transformation.scale) * Matrix::CreateRotationX(mesh->transformation.rotationX )*
+            Matrix::CreateRotationY(mesh->transformation.rotationY )* Matrix::CreateRotationZ(mesh->transformation.rotationZ )*
+            Matrix::CreateTranslation(mesh->transformation.translation);
+        constants.invTranspose = constants.modelMatrix;
+        constants.invTranspose.Translation(Vector3(0.0f));
+        constants.invTranspose.Invert().Transpose();
+
+        // 모델 변환 이외에도 시점 변환, 프로젝션 변환을 행렬로 미리 계산해서
+        // 쉐이더로 보내줄 수 있습니다.
 
         constants.material = mesh->material;
         constants.light = light;

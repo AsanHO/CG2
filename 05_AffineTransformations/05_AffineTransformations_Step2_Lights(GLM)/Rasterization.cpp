@@ -1,4 +1,5 @@
-﻿#include "Rasterization.h"
+﻿#define GLM_ENABLE_EXPERIMENTAL 
+#include "Rasterization.h"
 
 #include <algorithm> // std::min(), ...
 #include <glm/gtc/matrix_inverse.hpp>
@@ -215,10 +216,21 @@ void Rasterization::Render(vector<vec4> &pixels) {
 
         // 여기서 GPU에게 보내줄 변환 행렬을 만들어줘야 합니다.
         // 순서 주의 (GLM은 column major 사용)
-        // constants.modelMatrix = ...;
+        mat4 translation = translate(vec3(mesh->transformation.translation));
+        mat4 rotationX =
+            rotate(mesh->transformation.rotationX, vec3(1.0f, 0.0f, 0.0f));
+        mat4 rotationY =
+            rotate(mesh->transformation.rotationY, vec3(0.0f, 1.0f, 0.0f));
+        mat4 rotationZ =
+            rotate(mesh->transformation.rotationZ, vec3(0.0f, 0.0f, 1.0f));
+        mat4 scale = glm::scale(mesh->transformation.scale);
+        constants.modelMatrix = translation * rotationX * rotationY * rotationZ *scale;
 
         // Non-uniform scale인 경우에만 필요
-        // constants.invTranspose = ...;
+         constants.invTranspose = constants.modelMatrix;
+        constants.invTranspose[3] = vec4(0.0f, 0.0f, 0.0f, 1.0f); 
+        // translation 부분 초기화 :: 벡터는 이동을 할 수 없기 때문에, 쓸필요는 없지만 실무관점에서 수치 오류를 줄이기 위해 작성
+         constants.invTranspose = glm::inverseTranspose(constants.invTranspose);
 
         // 모델 변환 이외에도 시점 변환, 프로젝션 변환을 행렬로 미리 계산해서
         // 쉐이더로 보내줄 수 있습니다.

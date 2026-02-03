@@ -18,4 +18,4 @@ int main() {
     }
 
     return exampleApp.Run();
-}
+} //main 함수가 0으로 리턴되면 정상종료
