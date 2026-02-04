@@ -417,7 +417,10 @@ bool AppBase::InitDirect3D() {
                                     m_solidRasterizerSate.GetAddressOf());
 
     // TODO:
+     rastDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
 
+     m_device->CreateRasterizerState(&rastDesc,
+                                     m_wireRasterizerSate.GetAddressOf());
     CreateDepthBuffer();
 
     // Create depth stencil state

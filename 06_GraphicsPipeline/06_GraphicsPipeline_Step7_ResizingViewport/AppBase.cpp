@@ -84,6 +84,15 @@ int AppBase::Run() {
 
             UpdateGUI(); // 추가적으로 사용할 GUI
 
+            auto pos = ImGui::GetWindowPos();
+            auto size = ImGui::GetWindowSize();
+
+            std::cout << pos.x << "," << pos.y << " : " << size.x << ","
+                      << size.y << endl;
+            m_screenViewport.TopLeftX =  pos.x + size.x;
+            m_screenViewport.TopLeftY = 0;
+            m_screenViewport.Width = float(m_screenWidth - pos.x - size.x);
+            m_screenViewport.Height = float(m_screenHeight);
             ImGui::End();
             ImGui::Render(); // 렌더링할 것들 기록 끝
 
@@ -186,8 +195,8 @@ bool AppBase::InitMainWindow() {
     // 윈도우를 만들때 위에서 계산한 wr 사용
     m_mainWindow = CreateWindow(wc.lpszClassName, L"HongLabGraphics Example",
                                 WS_OVERLAPPEDWINDOW,
-                                100, // 윈도우 좌측 상단의 x 좌표
-                                100, // 윈도우 좌측 상단의 y 좌표
+                                100,                // 윈도우 좌측 상단의 x 좌표
+                                100,                // 윈도우 좌측 상단의 y 좌표
                                 wr.right - wr.left, // 윈도우 가로 방향 해상도
                                 wr.bottom - wr.top, // 윈도우 세로 방향 해상도
                                 NULL, NULL, wc.hInstance, NULL);
@@ -202,7 +211,7 @@ bool AppBase::InitMainWindow() {
 
     return true;
 }
-
+ 
 bool AppBase::InitDirect3D() {
 
     // 이 예제는 Intel 내장 그래픽스 칩으로 실행을 확인하였습니다.
@@ -389,7 +398,7 @@ bool AppBase::InitDirect3D() {
 
     // Set the viewport
     ZeroMemory(&m_screenViewport, sizeof(D3D11_VIEWPORT));
-    m_screenViewport.TopLeftX = 0;
+    m_screenViewport.TopLeftX = m_screenWidth;
     m_screenViewport.TopLeftY = 0;
     m_screenViewport.Width = float(m_screenWidth);
     m_screenViewport.Height = float(m_screenHeight);
@@ -519,11 +528,10 @@ void AppBase::CreateVertexShaderAndInputLayout(
 #endif
 
     // 쉐이더의 시작점의 이름이 "main"인 함수로 지정
-    // D3D_COMPILE_STANDARD_FILE_INCLUDE 추가: 쉐이더에서 include 사용 
+    // D3D_COMPILE_STANDARD_FILE_INCLUDE 추가: 쉐이더에서 include 사용
     HRESULT hr = D3DCompileFromFile(
         filename.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main",
-        "vs_5_0",
-                                    compileFlags, 0, &shaderBlob, &errorBlob);
+        "vs_5_0", compileFlags, 0, &shaderBlob, &errorBlob);
 
     CheckResult(hr, errorBlob.Get());
 
@@ -548,11 +556,10 @@ void AppBase::CreatePixelShader(const wstring &filename,
 #endif
 
     // 쉐이더의 시작점의 이름이 "main"인 함수로 지정
-    // D3D_COMPILE_STANDARD_FILE_INCLUDE 추가: 쉐이더에서 include 사용 
+    // D3D_COMPILE_STANDARD_FILE_INCLUDE 추가: 쉐이더에서 include 사용
     HRESULT hr = D3DCompileFromFile(
         filename.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main",
-        "ps_5_0",
-                                    compileFlags, 0, &shaderBlob, &errorBlob);
+        "ps_5_0", compileFlags, 0, &shaderBlob, &errorBlob);
 
     CheckResult(hr, errorBlob.Get());
 
@@ -588,7 +595,7 @@ void AppBase::CreateTexture(
     unsigned char *img =
         stbi_load(filename.c_str(), &width, &height, &channels, 0);
 
-    //assert(channels == 4);
+    // assert(channels == 4);
 
     std::vector<uint8_t> image;
 
