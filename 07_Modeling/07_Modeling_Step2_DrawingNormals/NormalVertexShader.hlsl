@@ -6,6 +6,10 @@ cbuffer NormalVertexConstantBuffer : register(b0)
     matrix invTranspose;
     matrix view;
     matrix projection;
+};
+
+cbuffer NormalVertexConstantBuffer : register(b1)
+{
     float scale; // 그려지는 선분의 길이 조절
 };
 

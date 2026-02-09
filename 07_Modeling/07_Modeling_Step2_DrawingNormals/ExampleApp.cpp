@@ -75,7 +75,7 @@ bool ExampleApp::Initialize() {
     // 노멀 벡터 그리기
     // 문제를 단순화하기 위해 InputLayout은 BasicVertexShader와 같이 사용합시다.
     m_normalLines = std::make_shared<Mesh>();
-    // Mesh *m_normalLines = new Mesh();
+    // Mesh *m_normalLines = new Mesh(); 쉐이더포인터를 안쓴다면 // 쉐어드 포인트는 사용하지 않으면 알아서 삭제함
 
     std::vector<Vertex> normalVertices;
     std::vector<uint16_t> normalIndices;
@@ -94,7 +94,20 @@ bool ExampleApp::Initialize() {
     }
 
     // TODO: 여기에 필요한 내용들 작성
+    AppBase::CreateVertexBuffer(normalVertices, m_normalLines->m_vertexBuffer);
+    m_normalLines->m_indexCount = UINT(normalVertices.size());
+    AppBase::CreateIndexBuffer(normalIndices, m_normalLines->m_indexBuffer);
 
+    // ConstantBuffer 만들기
+    AppBase::CreateConstantBuffer(m_normalVertexConstantBufferData,
+                                  m_normalLines->m_vertexConstantBuffer);
+    /*AppBase::CreateConstantBuffer(m_BasicPixelConstantBufferData,
+                                  m_normalLines->m_pixelConstantBuffer);*/
+    AppBase::CreateVertexShaderAndInputLayout(
+        L"NormalVertexShader.hlsl", basicInputElements, m_normalVertexShader,
+        m_basicInputLayout);
+
+    AppBase::CreatePixelShader(L"NormalPixelShader.hlsl", m_normalPixelShader);
     return true;
 }
 
@@ -167,6 +180,10 @@ void ExampleApp::Update(float dt) {
     // 노멀 벡터 그리기
     if (m_drawNormals) {
         // TODO: 여기에 필요한 내용들 작성
+        AppBase::UpdateBuffer(m_normalVertexConstantBufferData,
+                              m_normalLines->m_vertexConstantBuffer);
+        /*AppBase::UpdateBuffer(m_BasicPixelConstantBufferData,
+                              m_normalLines->m_pixelConstantBuffer);*/
     }
 }
 
@@ -224,7 +241,19 @@ void ExampleApp::Render() {
     if (m_drawNormals) {
 
         // TODO: 여기에 필요한 내용들 작성
-        
+        m_context->VSSetShader(m_normalVertexShader.Get(), 0, 0);
+        ID3D11Buffer *pptr[2] = {m_mesh->m_vertexConstantBuffer.Get(),
+                                 m_normalLines->m_vertexConstantBuffer.Get()};
+        m_context->VSSetConstantBuffers(
+            0, 2, pptr);
+        /*m_context->PSSetConstantBuffers(
+            0, 1, m_normalLines->m_pixelConstantBuffer.GetAddressOf());*/
+        m_context->PSSetShader(m_normalPixelShader.Get(), 0, 0);
+        m_context->IASetInputLayout(m_basicInputLayout.Get());
+        m_context->IASetVertexBuffers(
+            0, 1, m_normalLines->m_vertexBuffer.GetAddressOf(), &stride, &offset);
+        m_context->IASetIndexBuffer(m_normalLines->m_indexBuffer.Get(),
+                                    DXGI_FORMAT_R16_UINT, 0);
         m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
         m_context->DrawIndexed(m_normalLines->m_indexCount, 0, 0);
     }

@@ -58,10 +58,12 @@ static_assert((sizeof(BasicPixelConstantBuffer) % 16) == 0,
               "Constant Buffer size must be 16-byte aligned");
 
 struct NormalVertexConstantBuffer {
+    /* 위의 내용을 고대로 사용 -> 메모리 절약
     Matrix model;
     Matrix invTranspose;
     Matrix view;
     Matrix projection;
+    */
     float scale = 0.1f;
     float dummy[3];
 };
