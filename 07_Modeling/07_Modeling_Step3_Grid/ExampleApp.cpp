@@ -37,7 +37,7 @@ bool ExampleApp::Initialize() {
     m_device->CreateSamplerState(&sampDesc, m_samplerState.GetAddressOf());
 
     // Geometry 정의
-    MeshData meshData = GeometryGenerator::MakeGrid(2.0f, 1.7f, 5, 3);
+    MeshData meshData = GeometryGenerator::MakeGrid(2.0f, 1.7f, 100, 60);
 
     m_mesh = std::make_shared<Mesh>();
 

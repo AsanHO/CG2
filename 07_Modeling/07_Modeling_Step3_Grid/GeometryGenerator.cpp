@@ -206,52 +206,56 @@ MeshData GeometryGenerator::MakeGrid(const float width, const float height,
     // 2단계: 2차원 바둑판 구조
 
     const float dx = width / numSlices;
-
+    const float dy = height / numStacks;
     MeshData meshData;
 
     vector<Vertex> &vertices = meshData.vertices;
     vector<uint16_t> &indices = meshData.indices;
 
-    // y = -0.5f * height 인 점들
     Vector3 stackStartPoint = Vector3(-0.5f * width, -0.5f * height, 0.0f);
-    for (int i = 0; i <= numSlices; i++) {
-        Vertex v;
+    for (int j = 0; j <= numStacks; j++) {
 
-        // x-y 평면에서 시작점을 x 방향으로 이동
-        // v.position = ...;
+        stackStartPoint.x = -0.5f * width;
+        for (int i = 0; i <= numSlices; i++) {
+            Vertex v;
 
-        // 시점을 향하는 방향
-        v.normal = Vector3(0.0f, 0.0f, -1.0f);
+            // x-y 평면에서 시작점을 x 방향으로 이동
+            v.position = stackStartPoint;
+            stackStartPoint.x += dx;
+            v.position.z = sin(i * dx * 10.0f) * 0.1;
+            // 시점을 향하는 방향
+            v.normal = Vector3(0.0f, 0.0f, -1.0f);
 
-        // v.texcoord = ...;
+            v.texcoord =
+                Vector2(float(i)/ numSlices, 1.0f - float(j) / numStacks);
 
-        // vertices.push_back(v);
+            vertices.push_back(v);
+        }
+        stackStartPoint.y += dy;
+        // 인덱스 추가
+        
     }
-
-    // y = 0.5f * height 인 점들
-    stackStartPoint = Vector3(-0.5f * width, 0.5f * height, 0.0f);
-    for (int i = 0; i <= numSlices; i++) {
-        Vertex v;
-
-        // x-y 평면에서 시작점을 x 방향으로 이동
-        // v.position = ...;
-
-        // 시점을 향하는 방향
-        v.normal = Vector3(0.0f, 0.0f, -1.0f);
-
-        // v.texcoord = ...;
-
-        // vertices.push_back(v);
-    }
-
-    // 인덱스 추가
-    for (int i = 0; i < numSlices; i++) {
-
+    for (int j = 0; j < numStacks; j++) {
+        const int offset = (numSlices + 1) * j;
         // 첫번째 삼각형
-
-        // 두 번째 삼각형
+        for (int i = 0; i < numSlices; i++) {
+            indices.push_back(offset + i);
+            indices.push_back(offset + i + numSlices +1);
+            indices.push_back(offset + i + numSlices +2);
+            // 두 번째 삼각형
+            indices.push_back(offset + i);
+            indices.push_back(offset + i + numSlices + 2);
+            indices.push_back(offset + i +1);
+        }
+        
     }
-
+    //cout << "vertices size : " << vertices.size() << endl;
+    //// y = -0.5f * height 인 점들
+    //for (auto index : indices) {
+    //    cout << index << " ";
+    //}
+    //cout << endl;
+    //cout << "vertices size : " << vertices.size() << endl;
     return meshData;
 }
 
